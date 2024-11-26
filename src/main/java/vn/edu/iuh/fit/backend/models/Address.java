@@ -33,6 +33,15 @@ public class Address {
     @Column(name = "zipcode", length = 7)
     private String zipcode;
 
+    public Address(Long id, String street, String city, Short country, String number, String zipcode) {
+        this.id = id;
+        this.street = street;
+        this.city = city;
+        this.country = country;
+        this.number = number;
+        this.zipcode = zipcode;
+    }
 
-
+    public Address() {
+    }
 }

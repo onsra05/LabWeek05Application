@@ -32,4 +32,15 @@ public class Candidate {
     @JoinColumn(name = "address", nullable = false)
     private Address address;
 
+    public Candidate(Long id, LocalDate dob, String email, String fullName, String phone, Address address) {
+        this.id = id;
+        this.dob = dob;
+        this.email = email;
+        this.fullName = fullName;
+        this.phone = phone;
+        this.address = address;
+    }
+
+    public Candidate() {
+    }
 }
