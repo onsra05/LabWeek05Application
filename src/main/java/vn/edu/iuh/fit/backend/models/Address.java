@@ -44,4 +44,19 @@ public class Address {
 
     public Address() {
     }
+
+    @Override
+    public String toString() {
+        // Chuyển đổi mã quốc gia thành tên
+        String countryName = getCountryName(country);
+        return id + " " + street + " " + city + " " + zipcode + " " +  countryName;
+    }
+
+    // Phương thức chuyển đổi mã quốc gia thành tên quốc gia
+    private String getCountryName(Short countryCode) {
+        if (countryCode == 84) {
+            return "Vietnam";
+        }
+        return "Unknown Country";
+    }
 }

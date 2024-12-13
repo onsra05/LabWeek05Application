@@ -1,12 +1,14 @@
 package vn.edu.iuh.fit.backend.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
+
+@NoArgsConstructor
+@ToString
 @Table(name = "company")
 public class Company {
     @Id
@@ -32,4 +34,13 @@ public class Company {
     @JoinColumn(name = "address", nullable = false)
     private Address address;
 
+    public Company(Long id, String about, String email, String compName, String phone, String webUrl, Address address) {
+        this.id = id;
+        this.about = about;
+        this.email = email;
+        this.compName = compName;
+        this.phone = phone;
+        this.webUrl = webUrl;
+        this.address = address;
+    }
 }
