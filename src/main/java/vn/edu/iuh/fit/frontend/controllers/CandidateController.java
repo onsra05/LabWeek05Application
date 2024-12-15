@@ -1,53 +1,58 @@
 package vn.edu.iuh.fit.frontend.controllers;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import vn.edu.iuh.fit.backend.models.Candidate;
 import vn.edu.iuh.fit.backend.repositories.CandidateRepository;
-import vn.edu.iuh.fit.backend.services.CandidateServices;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Controller
+@RequestMapping("/candidates")
 public class CandidateController {
+
     @Autowired
     private CandidateRepository candidateRepository;
-    @Autowired
-    private CandidateServices candidateServices;
 
-    @GetMapping("/list")
-    public String showCandidateList(Model model) {
-        model.addAttribute("candidates", candidateRepository.findAll());
-        return "candidates/candidates";
+    @GetMapping
+    public String listCandidates(Model model) {
+        List<Candidate> candidates = candidateRepository.findAll();
+        model.addAttribute("candidates", candidates);
+        return "candidates/list";
     }
 
-    @GetMapping("/candidates")
-    public String showCandidateListPaging(Model model,
-                                          @RequestParam("page") Optional<Integer> page,
-                                          @RequestParam("size") Optional<Integer> size) {
-        int currentPage = page.orElse(1);
-        int pageSize = size.orElse(10);
-        Page<Candidate> candidatePage= candidateServices.findAll(
-                currentPage - 1,pageSize,"id","asc");
+    @GetMapping("/add")
+    public String showAddForm(Model model) {
+        model.addAttribute("candidate", new Candidate());
+        return "candidates/add";
+    }
 
+    @PostMapping("/add")
+    public String saveCandidate(@ModelAttribute Candidate candidate) {
+        candidateRepository.save(candidate);
+        return "redirect:/candidates";
+    }
 
-        model.addAttribute("candidatePage", candidatePage);
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        Candidate candidate = candidateRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid candidate ID: " + id));
+        model.addAttribute("candidate", candidate);
+        return "candidates/edit";
+    }
 
-        int totalPages = candidatePage.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
-        }
-        return "candidates/candidates-paging";
+    @PostMapping("/edit/{id}")
+    public String updateCandidate(@PathVariable Long id, @ModelAttribute Candidate candidate) {
+        candidate.setId(id);
+        candidateRepository.save(candidate);
+        return "redirect:/candidates";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteCandidate(@PathVariable Long id) {
+        Candidate candidate = candidateRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid candidate ID: " + id));
+        candidateRepository.delete(candidate);
+        return "redirect:/candidates";
     }
 }
